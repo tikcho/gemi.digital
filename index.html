@@ -470,12 +470,14 @@
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 2v.5l-8 5-8-5V6h16zM4 18V8.5l7.2 4.5c.5.32 1.1.32 1.6 0L20 8.5V18H4z"/></svg>
       </a>
     </div>
-    <div class="footer-text">© 2026 GEMI · Tbilisi, Georgia</div>
+    <div class="footer-text">© 2026 GEMI · Tbilisi, Georgia · <a href="index.html">Back to home</a></div>
   </footer>
 
 
   <script>
     const FORMSPREE_URL = 'https://formspree.io/f/mzdqdyey';
+    const WEB3FORMS_URL = 'https://api.web3forms.com/submit';
+    const WEB3FORMS_KEY = 'fc58081d-f44a-427f-b0e0-0a213da0ea25';
 
     // ====== MARKET RESEARCH SURVEY ======
     const questions = [
@@ -594,16 +596,56 @@
     async function submitForm(email, source, extraData = {}) {
       const signup = { email, source, timestamp: new Date().toISOString(), ...extraData };
 
-      // Submit to Formspree
-      try {
-        await fetch(FORMSPREE_URL, {
+      // Submit to both Web3Forms and Formspree for redundancy
+      const results = await Promise.allSettled([
+        // Submit to Web3Forms
+        (async () => {
+          const formData = new FormData();
+          formData.append('access_key', WEB3FORMS_KEY);
+          formData.append('email', email);
+          formData.append('source', source);
+          formData.append('timestamp', signup.timestamp);
+          
+          // Add extra data fields
+          if (extraData.message) {
+            formData.append('message', extraData.message);
+          }
+          if (extraData.surveyResults) {
+            formData.append('surveyResults', JSON.stringify(extraData.surveyResults));
+          }
+          if (extraData.rawAnswers) {
+            formData.append('rawAnswers', JSON.stringify(extraData.rawAnswers));
+          }
+          
+          const response = await fetch(WEB3FORMS_URL, {
+            method: 'POST',
+            body: formData
+          });
+          
+          if (!response.ok) {
+            throw new Error('Web3Forms submission failed');
+          }
+          return response.json();
+        })(),
+        
+        // Submit to Formspree
+        fetch(FORMSPREE_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
           body: JSON.stringify(signup)
-        });
-      } catch (e) {
-        console.error('Form submission failed:', e);
-      }
+        })
+      ]);
+      
+      // Log results for debugging
+      results.forEach((result, index) => {
+        const service = index === 0 ? 'Web3Forms' : 'Formspree';
+        if (result.status === 'fulfilled') {
+          console.log(`${service}: Success`);
+        } else {
+          console.error(`${service}: Failed -`, result.reason);
+        }
+      });
+      
       return true;
     }
 
