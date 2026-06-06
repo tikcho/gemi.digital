@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GEMI</title>
+  <meta name="description" content="GEMI matches you into a pod of 3–5 people based on real chemistry. No swiping. No ghosting. Just genuine friendships." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cyan: #22d3ee;
+      --cyan-light: #67e8f9;
+      --cyan-pale: #ecfeff;
+      --navy: #0f172a;
+      --navy-mid: #1e293b;
+      --navy-soft: #334155;
+      --slate: #64748b;
+      --slate-light: #94a3b8;
+      --bg: #f8fafc;
+      --bg-soft: #f1f5f9;
+      --white: #ffffff;
+      --border: #e2e8f0;
+      --success: #10b981;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: var(--navy);
+      background: var(--bg);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(248, 250, 252, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.9rem 1.5rem;
+    }
+    .nav-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 2rem; }
+    .nav-logo { font-size: 1.4rem; font-weight: 900; letter-spacing: 0.08em; background: linear-gradient(135deg, var(--cyan) 0%, var(--navy) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+    .nav-link { color: var(--navy-soft); font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+    .nav-link:hover { color: var(--cyan); text-decoration: none; }
+    .nav-cta { background: var(--navy); color: white; padding: 0.55rem 1.1rem; border-radius: 999px; font-size: 0.88rem; font-weight: 600; transition: all 0.2s; }
+    .nav-cta:hover { background: var(--cyan); color: var(--navy); text-decoration: none; transform: translateY(-1px); }
+
+    /* HERO */
+    .hero {
+      padding: 4rem 1.5rem 5rem;
+      background: radial-gradient(ellipse at top, var(--cyan-pale) 0%, var(--bg) 50%, #eef2ff 100%);
+      text-align: center;
+    }
+    .hero-inner { max-width: 760px; margin: 0 auto; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: white; border: 1px solid var(--border);
+      padding: 0.4rem 0.9rem; border-radius: 999px;
+      font-size: 0.82rem; font-weight: 500; color: var(--navy-soft);
+      margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+    .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--cyan); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    h1.hero-title {
+      font-size: clamp(2.4rem, 6vw, 4.2rem); font-weight: 900;
+      letter-spacing: -0.03em; line-height: 1.05;
+      margin-bottom: 1.2rem;
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, var(--cyan) 0%, var(--navy) 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .hero-sub { font-size: clamp(1.05rem, 2vw, 1.25rem); color: var(--slate); max-width: 580px; margin: 0 auto 2rem; }
+
+    /* WAITLIST FORM */
+    .waitlist-form {
+      display: flex; gap: 0.5rem; max-width: 460px; margin: 0 auto;
+      background: white; padding: 0.4rem; border-radius: 999px;
+      box-shadow: 0 10px 40px rgba(15, 23, 42, 0.12); border: 1px solid var(--border);
+    }
+    .waitlist-form input {
+      flex: 1; border: none; outline: none; font-size: 0.95rem;
+      padding: 0.7rem 1.1rem; background: transparent; font-family: inherit; color: var(--navy);
+    }
+    .waitlist-form button {
+      background: var(--navy); color: white; border: none;
+      padding: 0.7rem 1.4rem; border-radius: 999px;
+      font-weight: 600; font-size: 0.92rem; cursor: pointer;
+      transition: all 0.2s; font-family: inherit;
+    }
+    .waitlist-form button:hover { background: var(--cyan); color: var(--navy); }
+    .hero-stats { display: flex; justify-content: center; gap: 2.5rem; margin-top: 2.5rem; flex-wrap: wrap; }
+    .hero-stat { text-align: center; }
+    .hero-stat-num { font-size: 1.5rem; font-weight: 800; color: var(--navy); }
+    .hero-stat-label { font-size: 0.78rem; color: var(--slate); text-transform: uppercase; letter-spacing: 1px; font-weight: 500; }
+
+    /* SECTIONS */
+    section { padding: 4.5rem 1.5rem; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-header { text-align: center; margin-bottom: 3rem; }
+    .section-eyebrow { font-size: 0.78rem; font-weight: 700; color: var(--cyan); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0.6rem; }
+    h2 { font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; color: var(--navy); }
+    .section-sub { color: var(--slate); margin-top: 0.8rem; font-size: 1.05rem; max-width: 580px; margin-left: auto; margin-right: auto; }
+
+    /* HOW IT WORKS */
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.2rem; }
+    .step-card { background: white; border-radius: 16px; padding: 1.5rem 1.2rem; border: 1px solid var(--border); transition: all 0.3s; }
+    .step-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08); border-color: var(--cyan); }
+    .step-num { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, var(--cyan), var(--navy)); color: white; font-weight: 800; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; font-size: 1.05rem; }
+    .step-title { font-size: 1.05rem; font-weight: 700; color: var(--navy); margin-bottom: 0.4rem; }
+    .step-desc { font-size: 0.9rem; color: var(--slate); line-height: 1.5; }
+
+    /* VIBE QUIZ */
+    .quiz-section { background: linear-gradient(145deg, var(--navy) 0%, var(--navy-mid) 100%); color: white; }
+    .quiz-section h2, .quiz-section .section-sub { color: white; }
+    .quiz-section .section-eyebrow { color: var(--cyan-light); }
+    .quiz-section .section-sub { color: var(--slate-light); }
+    .quiz-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 2.2rem; max-width: 620px; margin: 0 auto; backdrop-filter: blur(10px); }
+    .quiz-progress { display: flex; gap: 0.4rem; margin-bottom: 1.5rem; }
+    .quiz-bar { flex: 1; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
+    .quiz-bar.active { background: var(--cyan); }
+    .quiz-question { font-size: 1.25rem; font-weight: 600; margin-bottom: 1.4rem; min-height: 60px; }
+    .quiz-options { display: grid; gap: 0.6rem; }
+    .quiz-option {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px; padding: 0.9rem 1.1rem; cursor: pointer;
+      transition: all 0.2s; color: white; font-size: 0.95rem; font-weight: 500;
+      text-align: left; font-family: inherit; width: 100%;
+    }
+    .quiz-option:hover { background: rgba(34, 211, 238, 0.15); border-color: var(--cyan); transform: translateX(4px); }
+    .quiz-option.selected { background: var(--cyan); color: var(--navy); border-color: var(--cyan); }
+    .quiz-result { display: none; text-align: center; }
+    .quiz-result.show { display: block; }
+    .quiz-result-emoji { font-size: 3.5rem; margin-bottom: 1rem; }
+    .quiz-result-type { font-size: 1.4rem; font-weight: 800; color: var(--cyan); margin-bottom: 0.6rem; }
+    .quiz-result-desc { color: var(--slate-light); margin-bottom: 1.5rem; line-height: 1.6; }
+    .quiz-email-form { display: flex; gap: 0.5rem; max-width: 400px; margin: 0 auto; flex-direction: column; }
+    .quiz-email-form input { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 0.8rem 1.1rem; border-radius: 12px; font-size: 0.95rem; font-family: inherit; }
+    .quiz-email-form input::placeholder { color: var(--slate-light); }
+    .quiz-email-form input:focus { outline: none; border-color: var(--cyan); }
+    .quiz-email-form button { background: var(--cyan); color: var(--navy); border: none; padding: 0.85rem; border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+    .quiz-email-form button:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(34, 211, 238, 0.3); }
+
+    /* COMPARISON */
+    .compare-table { background: white; border-radius: 20px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 8px 30px rgba(15, 23, 42, 0.05); }
+    .compare-row { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1fr; align-items: center; padding: 1.1rem 1.4rem; border-bottom: 1px solid var(--border); font-size: 0.92rem; }
+    .compare-row:last-child { border-bottom: none; }
+    .compare-row.header { background: var(--bg-soft); font-weight: 700; color: var(--navy); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    .compare-row.header > div { text-align: center; }
+    .compare-row.header > div:first-child { text-align: left; }
+    .compare-row > div { text-align: center; color: var(--slate); }
+    .compare-row > div:first-child { text-align: left; color: var(--navy); font-weight: 600; }
+    .compare-gemi { background: var(--cyan-pale); color: var(--navy) !important; font-weight: 700 !important; }
+    .check { color: var(--success); font-weight: 700; }
+    .cross { color: #ef4444; font-weight: 700; }
+
+    /* FOUNDING MEMBERS */
+    .founding { background: linear-gradient(135deg, var(--cyan-pale) 0%, #eef2ff 100%); border-radius: 24px; padding: 3rem 2rem; text-align: center; max-width: 720px; margin: 0 auto; border: 1px solid var(--border); }
+    .founding-badge { display: inline-block; background: var(--navy); color: var(--cyan-light); padding: 0.4rem 1rem; border-radius: 999px; font-size: 0.78rem; font-weight: 700; letter-spacing: 1px; margin-bottom: 1.2rem; }
+    .founding h3 { font-size: clamp(1.6rem, 3vw, 2rem); font-weight: 800; margin-bottom: 0.8rem; }
+    .founding-perks { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin: 1.8rem 0; }
+    .perk { background: white; padding: 1rem 0.8rem; border-radius: 12px; border: 1px solid var(--border); }
+    .perk-icon { font-size: 1.6rem; margin-bottom: 0.4rem; }
+    .perk-text { font-size: 0.82rem; font-weight: 600; color: var(--navy); line-height: 1.4; }
+    .spots-left { font-size: 0.88rem; color: var(--slate); margin-top: 1rem; }
+    .spots-left strong { color: var(--navy); }
+
+    /* FAQ */
+    .faq-list { max-width: 720px; margin: 0 auto; }
+    .faq-item { background: white; border: 1px solid var(--border); border-radius: 14px; margin-bottom: 0.8rem; overflow: hidden; transition: all 0.2s; }
+    .faq-item:hover { border-color: var(--cyan); }
+    .faq-question { padding: 1.2rem 1.4rem; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 1rem; color: var(--navy); }
+    .faq-toggle { color: var(--cyan); font-size: 1.4rem; font-weight: 400; transition: transform 0.2s; }
+    .faq-item.open .faq-toggle { transform: rotate(45deg); }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; padding: 0 1.4rem; color: var(--slate); font-size: 0.95rem; line-height: 1.65; }
+    .faq-item.open .faq-answer { max-height: 300px; padding: 0 1.4rem 1.2rem; }
+
+    /* FINAL CTA */
+    .final-cta { background: linear-gradient(145deg, var(--navy) 0%, var(--navy-mid) 50%, #0c1a30 100%); color: white; text-align: center; padding: 5rem 1.5rem; }
+    .final-cta h2 { color: white; margin-bottom: 1rem; }
+    .final-cta p { color: var(--slate-light); margin-bottom: 2rem; font-size: 1.05rem; }
+
+    /* FOOTER */
+    footer { padding: 2.5rem 1.5rem; text-align: center; background: white; border-top: 1px solid var(--border); }
+    .footer-links { display: flex; gap: 1rem; justify-content: center; margin-bottom: 1rem; }
+    .footer-icon { width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid var(--border); color: var(--navy); transition: all 0.2s; }
+    .footer-icon:hover { background: var(--cyan-pale); border-color: var(--cyan); transform: translateY(-2px); text-decoration: none; }
+    .footer-icon svg { width: 18px; height: 18px; fill: currentColor; }
+    .footer-text { font-size: 0.85rem; color: var(--slate); }
+
+    .success-message { display: none; background: var(--success); color: white; padding: 1rem 1.5rem; border-radius: 12px; max-width: 460px; margin: 1rem auto 0; font-weight: 500; }
+    .success-message.show { display: block; animation: slideUp 0.4s ease; }
+    @keyframes slideUp { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    @media (max-width: 600px) {
+      .compare-row { grid-template-columns: 1.2fr 0.8fr 0.8fr 0.8fr; padding: 0.8rem 0.7rem; font-size: 0.78rem; }
+      .waitlist-form { flex-direction: column; border-radius: 16px; padding: 0.6rem; }
+      .waitlist-form button { width: 100%; padding: 0.85rem; }
+      .hero-stats { gap: 1.5rem; }
+      section { padding: 3rem 1.2rem; }
+      .nav-links { display: none; }
+      .nav-inner { gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-inner">
+      <div class="nav-logo">GEMI</div>
+      <div class="nav-links">
+        <a href="#how-it-works" class="nav-link">How It Works</a>
+        <a href="#survey" class="nav-link">Survey</a>
+        <a href="#why-gemi" class="nav-link">Why GEMI</a>
+        <a href="#faq" class="nav-link">FAQ</a>
+        <a href="#waitlist" class="nav-cta">Join Waitlist</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-badge">
+        <span class="pulse-dot"></span>
+        <span>Launching Soon · Founding Members open</span>
+      </div>
+      <h1 class="hero-title">Find your <span class="gradient-text">tribe</span>,<br>Not just a match.</h1>
+      <p class="hero-sub">GEMI matches you into a pod of 3–5 people based on real chemistry — personality, values, social vibe. No swiping. No ghosting. Just genuine friendships.</p>
+
+      <div style="background: white; padding: 1.5rem; border-radius: 20px; max-width: 520px; margin: 0 auto; box-shadow: 0 10px 40px rgba(15, 23, 42, 0.12); border: 2px solid var(--cyan);">
+        <div style="text-align: center; margin-bottom: 1rem;">
+          <div style="display: inline-block; background: var(--navy); color: var(--cyan-light); padding: 0.35rem 0.9rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; margin-bottom: 0.5rem;">FOUNDING MEMBERS · FIRST 100</div>
+          <p style="font-size: 0.9rem; color: var(--slate); margin: 0;">Lifetime Pro access + exclusive perks. Limited spots.</p>
+        </div>
+        <form id="heroForm" style="display: flex; flex-direction: column; gap: 0.8rem;">
+          <input type="email" name="email" placeholder="Your email" required style="width: 100%; padding: 0.85rem 1.1rem; border: 1px solid var(--border); border-radius: 12px; font-size: 0.95rem; font-family: inherit;" />
+          <textarea name="message" placeholder="Why are you interested? (optional)" rows="2" style="width: 100%; padding: 0.85rem 1.1rem; border: 1px solid var(--border); border-radius: 12px; font-family: inherit; font-size: 0.95rem; resize: vertical;"></textarea>
+          <button type="submit" style="width: 100%; padding: 0.9rem; background: var(--navy); color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; font-family: inherit;">Claim Your Founding Member Spot</button>
+        </form>
+        <div class="success-message" id="heroSuccess" style="margin-top: 0.8rem;">🎉 Welcome, Founding Member! You're in.</div>
+      </div>
+
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-num">3–5</div>
+          <div class="hero-stat-label">People per pod</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">0</div>
+          <div class="hero-stat-label">Swiping required</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">100%</div>
+          <div class="hero-stat-label">Chemistry-first</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how-it-works">
+    <div class="section-inner">
+      <div class="section-header">
+        <div class="section-eyebrow">How it works</div>
+        <h2>Five steps to your people.</h2>
+        <p class="section-sub">No endless profiles. No awkward 1:1s. Just a short questionnaire and weekly matches.</p>
+      </div>
+      <div class="steps">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div class="step-title">Profile & Verify</div>
+          <div class="step-desc">Quick questionnaire on personality, interests, social battery. Verified profiles only.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div class="step-title">Weekly Matching</div>
+          <div class="step-desc">Every Sunday at 6 PM, our algorithm builds you a pod of compatible people.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <div class="step-title">Anonymous Trial</div>
+          <div class="step-desc">Chat with your pod for a week — no names, no photos. Just the vibe.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">4</div>
+          <div class="step-title">Lock It In</div>
+          <div class="step-desc">If it clicks, reveal identities and keep the pod. If not, rematch next week.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">5</div>
+          <div class="step-title">Hang Out IRL</div>
+          <div class="step-desc">GEMI suggests activities, finds venues, and helps you coordinate hangouts.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VIBE QUIZ -->
+  <section id="survey" class="quiz-section">
+    <div class="section-inner">
+      <div class="section-header">
+        <div class="section-eyebrow">Quick Survey</div>
+        <h2>Help us build GEMI for you.</h2>
+        <p class="section-sub">Answer 4 quick questions to share your thoughts. Your feedback shapes the app.</p>
+      </div>
+
+      <div class="quiz-card">
+        <!-- Questions -->
+        <div id="quizQuestions">
+          <div class="quiz-progress">
+            <div class="quiz-bar" id="bar1"></div>
+            <div class="quiz-bar" id="bar2"></div>
+            <div class="quiz-bar" id="bar3"></div>
+            <div class="quiz-bar" id="bar4"></div>
+          </div>
+          <div class="quiz-question" id="quizQuestion"></div>
+          <div class="quiz-options" id="quizOptions"></div>
+        </div>
+
+        <!-- Result -->
+        <div class="quiz-result" id="quizResult">
+          <div class="quiz-result-emoji" id="resultEmoji">🌟</div>
+          <div class="quiz-result-type" id="resultType">The Connector</div>
+          <div class="quiz-result-desc" id="resultDesc"></div>
+          <form class="quiz-email-form" id="quizForm">
+            <input type="email" name="email" placeholder="Your email to join waitlist" required />
+            <button type="submit">Join Waitlist</button>
+          </form>
+          <div class="success-message" id="quizSuccess" style="margin-top: 1rem;">🎉 Thank you! Your feedback has been recorded.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARISON -->
+  <section id="why-gemi">
+    <div class="section-inner">
+      <div class="section-header">
+        <div class="section-eyebrow">Why GEMI</div>
+        <h2>Built differently from everything else.</h2>
+        <p class="section-sub">Bumble BFF optimizes for 1-on-1. Event platforms optimize for crowds. GEMI optimizes for chemistry.</p>
+      </div>
+      <div class="compare-table">
+        <div class="compare-row header">
+          <div></div>
+          <div>Bumble BFF</div>
+          <div>Meetup</div>
+          <div>GEMI</div>
+        </div>
+        <div class="compare-row">
+          <div>Group dynamics (3–5 people)</div>
+          <div><span class="cross">✕</span></div>
+          <div><span class="cross">✕</span> too large</div>
+          <div class="compare-gemi"><span class="check">✓</span></div>
+        </div>
+        <div class="compare-row">
+          <div>Chemistry-first (no swiping)</div>
+          <div><span class="cross">✕</span></div>
+          <div><span class="cross">✕</span></div>
+          <div class="compare-gemi"><span class="check">✓</span></div>
+        </div>
+        <div class="compare-row">
+          <div>Anonymous trial period</div>
+          <div><span class="cross">✕</span></div>
+          <div><span class="cross">✕</span></div>
+          <div class="compare-gemi"><span class="check">✓</span></div>
+        </div>
+        <div class="compare-row">
+          <div>AI activity coordination</div>
+          <div><span class="cross">✕</span></div>
+          <div><span class="cross">✕</span></div>
+          <div class="compare-gemi"><span class="check">✓</span></div>
+        </div>
+        <div class="compare-row">
+          <div>Real friendships, not dates</div>
+          <div><span class="cross">✕</span></div>
+          <div>~</div>
+          <div class="compare-gemi"><span class="check">✓</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOUNDING MEMBERS -->
+  <section>
+    <div class="section-inner">
+      <div class="founding">
+        <div class="founding-badge">FOUNDING MEMBERS · FIRST 100</div>
+        <h3>Shape GEMI from day one.</h3>
+        <p style="color: var(--slate); max-width: 480px; margin: 0 auto;">Founding Members get perks no one else will ever get. Sign up at the top of this page to claim your spot.</p>
+        <div class="founding-perks">
+          <div class="perk"><div class="perk-icon">🆓</div><div class="perk-text">Lifetime Pro<br>access</div></div>
+          <div class="perk"><div class="perk-icon">⚡</div><div class="perk-text">First pick on<br>launch matches</div></div>
+          <div class="perk"><div class="perk-icon">🎟️</div><div class="perk-text">Exclusive<br>founding events</div></div>
+          <div class="perk"><div class="perk-icon">⭐</div><div class="perk-text">Founding Member<br>profile badge</div></div>
+        </div>
+        <a href="#" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;" style="display: inline-block; margin-top: 1.5rem; background: var(--navy); color: white; padding: 0.9rem 2rem; border-radius: 999px; font-weight: 700; text-decoration: none; transition: all 0.2s;">Scroll to Top to Join</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="section-inner">
+      <div class="section-header">
+        <div class="section-eyebrow">FAQ</div>
+        <h2>The questions we get most.</h2>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item">
+          <div class="faq-question">How is GEMI different from Bumble BFF or dating apps?<span class="faq-toggle">+</span></div>
+          <div class="faq-answer">GEMI matches groups of 3–5 people based on chemistry, not 1-on-1 based on photos. There's no swiping, no ghosting, and no dating-app awkwardness. We use personality science (Big Five) and NLP to find people who actually click as a group.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">Is this just for finding friends or also for dating?<span class="faq-toggle">+</span></div>
+          <div class="faq-answer">GEMI is strictly for forming friend groups. We've intentionally designed every part of the product — group dynamics, anonymous trial, role-balanced pods — to be the opposite of a dating app.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">What's the anonymous trial period?<span class="faq-toggle">+</span></div>
+          <div class="faq-answer">For the first week, your pod chats without names or photos — only compatibility scores and conversation. This removes superficial judgment and lets real chemistry emerge. If everyone vibes, identities are revealed. If not, you rematch.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">When is GEMI launching?<span class="faq-toggle">+</span></div>
+          <div class="faq-answer">Closed beta launches with 50–100 Founding Members. Public beta in Tbilisi follows shortly after. Join the waitlist for early access and Founding Member perks.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">How much does it cost?<span class="faq-toggle">+</span></div>
+          <div class="faq-answer">There's a Free tier (1 pod/week, basic matching), a Pro tier ($9.99/mo with priority matching), and an Elite tier ($19.99/mo with AI activity planning). Founding Members get lifetime Pro free.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">Is my personality data safe?<span class="faq-toggle">+</span></div>
+          <div class="faq-answer">Yes. We use industry-standard encryption, never sell user data, and you can delete your profile and data at any time. The data is used only to improve your matches.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="final-cta" id="waitlist">
+    <div class="section-inner">
+      <h2>Your tribe is waiting.</h2>
+      <p>Be one of the first to find them. Join the GEMI waitlist today.</p>
+      <form class="waitlist-form" id="finalForm">
+        <input type="email" name="email" placeholder="you@example.com" required />
+        <button type="submit">Join the Waitlist</button>
+      </form>
+      <div class="success-message" id="finalSuccess">🎉 You're on the list. Welcome to GEMI.</div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-links">
+      <a href="https://www.linkedin.com/in/tinatin-verdzeuli/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="footer-icon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5Zm.02 4.5H0v16h5V8h-0.0Zm7.5 0h-4.7v16h5V14.5c0-4.24 5.5-4.58 5.5 0V24h4.7V13.5c0-8.47-9.1-8.17-10.5-4z"/></svg>
+      </a>
+      <a href="https://github.com/tikcho" target="_blank" rel="noopener noreferrer" aria-label="GitHub" class="footer-icon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0a12 12 0 00-3.79 23.39c.6.11.82-.26.82-.58v-2.03c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.1-.75.08-.74.08-.74 1.22.09 1.86 1.26 1.86 1.26 1.08 1.86 2.83 1.32 3.52 1.01.11-.79.42-1.32.76-1.62-2.66-.3-5.46-1.33-5.46-5.94 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.16 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 016 0c2.3-1.55 3.3-1.23 3.3-1.23.66 1.64.24 2.86.12 3.16.77.84 1.24 1.91 1.24 3.22 0 4.62-2.8 5.63-5.47 5.93.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.82.58A12 12 0 0012 0z"/></svg>
+      </a>
+      <a href="mailto:tikoverdzeuli@gmail.com" aria-label="Email" class="footer-icon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 2v.5l-8 5-8-5V6h16zM4 18V8.5l7.2 4.5c.5.32 1.1.32 1.6 0L20 8.5V18H4z"/></svg>
+      </a>
+    </div>
+    <div class="footer-text">© 2026 GEMI · Tbilisi, Georgia</div>
+  </footer>
+
+
+  <script>
+    const FORMSPREE_URL = 'https://formspree.io/f/mzdqdyey';
+
+    // ====== MARKET RESEARCH SURVEY ======
+    const questions = [
+      {
+        q: "How interested are you in using GEMI when it launches?",
+        options: [
+          { text: "Very interested — I'd use it right away", value: 5 },
+          { text: "Interested — I'd try it out", value: 4 },
+          { text: "Somewhat interested — Maybe", value: 3 },
+          { text: "Not very interested", value: 2 },
+          { text: "Not interested at all", value: 1 }
+        ]
+      },
+      {
+        q: "What appeals to you most about GEMI?",
+        options: [
+          { text: "Small group format (3-5 people)", value: "group_size" },
+          { text: "Personality-based matching", value: "matching" },
+          { text: "Anonymous trial period", value: "anonymous" },
+          { text: "AI activity coordination", value: "ai_coordination" },
+          { text: "Chemistry-first approach (no swiping)", value: "chemistry" }
+        ]
+      },
+      {
+        q: "How often do you struggle to find genuine friendships?",
+        options: [
+          { text: "Very often — it's a real challenge", value: 5 },
+          { text: "Often — more than I'd like", value: 4 },
+          { text: "Sometimes — here and there", value: 3 },
+          { text: "Rarely — I have enough friends", value: 2 },
+          { text: "Never — I'm satisfied socially", value: 1 }
+        ]
+      },
+      {
+        q: "Would you recommend GEMI to a friend based on what you've seen?",
+        options: [
+          { text: "Definitely — I'd tell everyone", value: 5 },
+          { text: "Probably — sounds promising", value: 4 },
+          { text: "Maybe — need to see more", value: 3 },
+          { text: "Probably not", value: 2 },
+          { text: "Definitely not", value: 1 }
+        ]
+      }
+    ];
+
+    let currentQ = 0;
+    let answers = [];
+
+    function renderQuestion() {
+      const q = questions[currentQ];
+      document.getElementById('quizQuestion').textContent = q.q;
+      const optsEl = document.getElementById('quizOptions');
+      optsEl.innerHTML = '';
+      q.options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-option';
+        btn.textContent = opt.text;
+        btn.onclick = () => selectOption(opt);
+        optsEl.appendChild(btn);
+      });
+      for (let i = 1; i <= 4; i++) {
+        document.getElementById('bar' + i).classList.toggle('active', i <= currentQ + 1);
+      }
+    }
+
+    function selectOption(opt) {
+      answers.push(opt.value);
+      currentQ++;
+      if (currentQ < questions.length) {
+        renderQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      document.getElementById('quizQuestions').style.display = 'none';
+      document.getElementById('quizResult').classList.add('show');
+      
+      // Calculate interest score
+      const interestScore = answers[0] || 3;
+      const painPoint = answers[2] || 3;
+      const nps = answers[3] || 3;
+      
+      let emoji = "🎉";
+      let message = "Thank you for your feedback!";
+      let desc = "Your input helps us build a better GEMI. Join the waitlist to be notified when we launch.";
+      
+      if (interestScore >= 4) {
+        emoji = "🚀";
+        message = "You're going to love GEMI!";
+        desc = "Based on your answers, GEMI is exactly what you're looking for. Join the waitlist to get early access.";
+      } else if (interestScore === 3) {
+        emoji = "💭";
+        message = "We'd love to win you over!";
+        desc = "Your feedback helps us improve. Join the waitlist to see how GEMI evolves.";
+      }
+      
+      document.getElementById('resultEmoji').textContent = emoji;
+      document.getElementById('resultType').textContent = message;
+      document.getElementById('resultDesc').textContent = desc;
+      
+      // Store survey results for form submit
+      window._quizResult = { 
+        surveyResults: {
+          interestLevel: interestScore,
+          topFeature: answers[1],
+          painPoint: painPoint,
+          nps: nps
+        },
+        rawAnswers: answers 
+      };
+    }
+
+    // ====== FORM HANDLING ======
+    async function submitForm(email, source, extraData = {}) {
+      const signup = { email, source, timestamp: new Date().toISOString(), ...extraData };
+
+      // Submit to Formspree
+      try {
+        await fetch(FORMSPREE_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(signup)
+        });
+      } catch (e) {
+        console.error('Form submission failed:', e);
+      }
+      return true;
+    }
+
+    function attachForm(formId, successId, source) {
+      const form = document.getElementById(formId);
+      if (!form) return;
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = form.email.value.trim();
+        if (!email) return;
+        
+        let extra = {};
+        if (source === 'quiz') {
+          extra = window._quizResult || {};
+        } else if (source === 'founding' && form.message) {
+          extra.message = form.message.value.trim();
+        }
+        
+        await submitForm(email, source, extra);
+        form.style.display = 'none';
+        document.getElementById(successId).classList.add('show');
+      });
+    }
+
+    attachForm('heroForm', 'heroSuccess', 'founding');
+    // foundingForm removed - now using heroForm for founding members
+    attachForm('finalForm', 'finalSuccess', 'final');
+    attachForm('quizForm', 'quizSuccess', 'quiz');
+
+    // ====== FAQ TOGGLE ======
+    document.querySelectorAll('.faq-item').forEach(item => {
+      item.querySelector('.faq-question').addEventListener('click', () => {
+        item.classList.toggle('open');
+      });
+    });
+
+    // ====== INIT ======
+    renderQuestion();
+  </script>
+
+</body>
+</html>
